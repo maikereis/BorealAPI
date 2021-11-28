@@ -1,3 +1,4 @@
+from logs.customlogger import logger
 from passlib.context import CryptContext
 
 
@@ -33,5 +34,6 @@ def verify_password(plain_password, hashed_password):
         Returns:
             passwords_match : bool
     """
+    logger.info("called")
     passwords_match = pwd_context.verify(plain_password, hashed_password)
     return passwords_match

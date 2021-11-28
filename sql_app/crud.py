@@ -1,7 +1,9 @@
+from logs.customlogger import logger
+
 from sqlalchemy.orm import Session
 
 from .orm_models import UserOrm
-from .schemas import UserCreate
+from .models import UserCreate
 
 from .security import hash_password
 
@@ -23,6 +25,7 @@ def get_user_by_email(db: Session, email: str):
         bool : False
             if none entry with  email was found
     """
+    logger.info("called")
     return db.query(UserOrm).filter(UserOrm.email == email).first()
 
 

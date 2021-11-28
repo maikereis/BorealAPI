@@ -5,7 +5,9 @@ from sql_app.schemas import UserCreate
 from sql_app.database import SessionLocal, engine
 from security import authentication
 
+
 orm_models.Base.metadata.create_all(bind=engine)
+
 
 users = [
     UserCreate(email="fake_email0@gmail.com", password="pass0"),

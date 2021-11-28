@@ -32,7 +32,6 @@ def authenticate_user(db: Session, email: str, password: str):
         return False
 
     if not verify_password(password, user_in_db.hashed_password):
-        logger.info("passwords don't match.")
         return False
 
     return user_in_db
