@@ -1,0 +1,5 @@
+logs -> Compress, zip log files
+authentication -> authentication module
+authorization -> authorization module
+class -> define classes
+mockapi

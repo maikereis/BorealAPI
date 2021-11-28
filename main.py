@@ -1,3 +1,5 @@
+from logs.customlogger import logger
+
 from fastapi import FastAPI
 
 
@@ -6,7 +8,8 @@ app = FastAPI()
 
 @app.get("/")
 async def root():
-    return {"print": "Hello World!"}
+    logger.info("root")
+    return {"message": "Hello World"}
 
 
 if __name__ == "__main__":
