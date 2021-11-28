@@ -1,6 +1,7 @@
 from logs.customlogger import logger
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
+from fastapi.security import OAuth2PasswordRequestForm
 
 
 app = FastAPI()
@@ -11,6 +12,9 @@ async def root():
     logger.info("root")
     return {"message": "Hello World"}
 
+@app.post("/")
+async def request_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    return None
 
 if __name__ == "__main__":
     import uvicorn
