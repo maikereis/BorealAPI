@@ -12,9 +12,12 @@ async def root():
     logger.info("root")
     return {"message": "Hello World"}
 
+
 @app.post("/")
 async def request_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    logger.info(form_data)
     return None
+
 
 if __name__ == "__main__":
     import uvicorn
