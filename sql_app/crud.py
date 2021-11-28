@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from .orm_models import UserOrm
 from .schemas import UserCreate
 
-from security import authentication
+from .security import hash_password
 
 
 def get_user_by_email(db: Session, email: str):
@@ -44,7 +44,7 @@ def create_user(db: Session, user: UserCreate):
 
             a User object
     """
-    hashed_password = authentication.hash_password(user.password)
+    hashed_password = hash_password(user.password)
     db_user = UserOrm(email=user.email, hashed_password=hashed_password)
     db.add(db_user)
     db.commit()

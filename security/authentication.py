@@ -1,37 +1,38 @@
-from passlib.context import CryptContext
+from logs.customlogger import logger
+from sqlalchemy.orm import Session
+
+from sql_app import crud
+from sql_app.security import verify_password
 
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
-def hash_password(plain_password):
+def authenticate_user(db: Session, email: str, password: str):
     """
-    Hash a plain password
-
-    Parameters:
-        plain_password: str
-
-    Return:
-        hashed_passwrod: str
-    """
-    hashed_password = pwd_context.hash(plain_password)
-    return hashed_password
-
-
-def verify_user_password(plain_password, hashed_password):
-    """
-    Verify if the passed password and the hashed_password found
-    in the database matches
+    Start the authentication process:
+    1. Search the user in database.
+    2. Verify if credentials (password) matches.
 
         Parameters:
-            plain_password : str
-                a unhashed passord.
+            email : str
+                the user identification, in this application is an email.
 
-            hashed_password : str
-                a hashed password.
+            password : str
+                the user password.
 
-        Returns:
-            passwords_match : bool
+            db : Session
+                a database session
+
     """
-    passwords_match = pwd_context.verify(plain_password, hashed_password)
-    return passwords_match
+    logger.info("called")
+
+    # Search for user in database
+    user_in_db = crud.get_user_by_email(db, email=email)
+
+    if not user_in_db:
+        logger.info("user not found.")
+        return False
+
+    if not verify_password(password, user_in_db.hashed_password):
+        logger.info("passwords don't match.")
+        return False
+
+    return user_in_db
