@@ -9,7 +9,7 @@ class Order(BaseModel):
     previous_order: bool
 
 
-class Brewerie(BaseModel):
+class Brewery(BaseModel):
     id: str
     name: str
     brewery_type: Optional[str]
@@ -30,4 +30,4 @@ class Brewerie(BaseModel):
 
 
 class Breweries(BaseModel):
-    all_breweries: List[Brewerie]
+    all_breweries: List[Brewery]
