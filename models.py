@@ -1,9 +1,12 @@
 from logs.customlogger import logger
+import re
 from datetime import datetime
 from pydantic import BaseModel, validator
 from typing import List, Optional
 
 RE_NAMES = "[A-Za-z]{2,30}"
+
+RE_BREWERY_NAMES = "[A-Za-z0-9. -]{2,50}"
 
 class Order(BaseModel):
     user_client: str
@@ -12,7 +15,6 @@ class Order(BaseModel):
 
     @validator('user_client')
     def is_user_client_valid(cls, user_client):
-        return user_client
         if re.fullmatch(RE_NAMES, user_client) is None:
             raise ValueError("user/client invalid")
         return user_client
@@ -32,7 +34,7 @@ class Order(BaseModel):
 
 
 class Brewery(BaseModel):
-    id: str
+    id: Optional[str]
     name: str
     brewery_type: Optional[str]
     street: Optional[str]
@@ -47,9 +49,26 @@ class Brewery(BaseModel):
     latitude: Optional[str]
     phone: Optional[str]
     website_url: Optional[str]
-    updated_at: datetime
-    created_at: datetime
+    updated_at: Optional[datetime]
+    created_at: Optional[datetime]
 
+    @validator('name')
+    def is_string(cls, name):
+        if isinstance(name, str):
+            return name
+        raise ValueError('not a string')
+
+    @validator('name')
+    def is_name_valid(cls, name):
+        if re.fullmatch(RE_BREWERY_NAMES, name) is None:
+            raise ValueError("name invalid")
+        return name
 
 class Breweries_names(BaseModel):
     names: List[str]
+
+    @validator('names')
+    def is_string(cls, names):
+        if isinstance(names, List):
+            return names
+        raise ValueError('not a List')
