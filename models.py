@@ -1,12 +1,34 @@
+from logs.customlogger import logger
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from typing import List, Optional
 
+RE_NAMES = "[A-Za-z]{2,30}"
 
 class Order(BaseModel):
     user_client: str
     order_value: float
     previous_order: bool
+
+    @validator('user_client')
+    def is_user_client_valid(cls, user_client):
+        return user_client
+        if re.fullmatch(RE_NAMES, user_client) is None:
+            raise ValueError("user/client invalid")
+        return user_client
+
+    @validator('order_value')
+    def value_is_positive(cls, order_value):
+        if order_value < 0:
+            logger.error('negative order_value')
+            raise ValueError('negative order_value')
+        return order_value
+
+    @validator('previous_order')
+    def is_bolean(cls, previous_order):
+        if isinstance(previous_order, bool):
+            return previous_order
+        raise ValueError("value isn't boolean")
 
 
 class Brewery(BaseModel):
