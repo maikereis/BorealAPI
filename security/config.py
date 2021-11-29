@@ -17,7 +17,7 @@ class AuthorizationSettings(BaseSettings):
 
     secret_key: str
     algorithm: str
-    lifetime: int = 30
+    lifetime: int = 60
 
     class Config:
         env_file = ".env"
