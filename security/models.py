@@ -1,11 +1,11 @@
 """
 This module defines the classes used in the authorization process.
 """
+
 import re
 from datetime import datetime, timedelta, timezone
 
 from pydantic import BaseModel, validator
-from logs.customlogger import logger
 from typing import Optional
 
 RE_NAMES = "[A-Za-z]{2,30}"
@@ -34,9 +34,9 @@ class Token(BaseModel):
 
     @validator("token_type")
     def is_token_type_valid(cls, token_type):
-        if re.fullmatch(RE_NAMES, token_type) is None:
-            raise ValueError("token_type invalid")
-        return token_type
+        if re.fullmatch(RE_NAMES, token_type):
+            return token_type
+        raise ValueError("token_type invalid")
 
 
 class TokenOwner(BaseModel):
@@ -63,10 +63,9 @@ class TokenOwner(BaseModel):
     # Verifies if the email matches the format "a.b.c@d.e.f"
     @validator("email")
     def email_has_correct_format(cls, email):
-        if re.fullmatch(RE_EMAILS, email) is None:
-            logger.error("invalid e-mail")
-            raise ValueError("e-mail invalid")
-        return email
+        if re.fullmatch(RE_EMAILS, email):
+            return email
+        raise ValueError("e-mail invalid")
 
 
 class JWTPayload(BaseModel):
@@ -105,10 +104,9 @@ class JWTPayload(BaseModel):
 
     @validator("sub")
     def email_has_correct_format(cls, sub):
-        if re.fullmatch(RE_EMAILS, sub) is None:
-            logger.error("sub has an invalid e-mail")
-            raise ValueError("e-mail invalid")
-        return sub
+        if re.fullmatch(RE_EMAILS, sub):
+            return sub
+        raise ValueError("e-mail invalid")
 
     @validator("exp")
     def is_datetime(cls, exp):

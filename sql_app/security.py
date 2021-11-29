@@ -19,6 +19,7 @@ def hash_password(plain_password):
     Returns:
         str: a hashed_password
     """
+    logger.info("called")
     hashed_password = pwd_context.hash(plain_password)
     return hashed_password
 

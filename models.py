@@ -1,11 +1,13 @@
-from logs.customlogger import logger
+"""
+This module defines the endpoint's payloads
+"""
+
 import re
 from datetime import datetime
 from pydantic import BaseModel, validator
 from typing import List, Optional
 
 RE_NAMES = "[A-Za-z]{2,30}"
-
 RE_BREWERY_NAMES = "[A-Za-z0-9. -]{2,50}"
 
 
@@ -16,16 +18,15 @@ class Order(BaseModel):
 
     @validator("user_client")
     def is_user_client_valid(cls, user_client):
-        if re.fullmatch(RE_NAMES, user_client) is None:
-            raise ValueError("user/client invalid")
-        return user_client
+        if re.fullmatch(RE_NAMES, user_client):
+            return user_client
+        raise ValueError("user/client invalid")
 
     @validator("order_value")
     def value_is_positive(cls, order_value):
-        if order_value < 0:
-            logger.error("negative order_value")
-            raise ValueError("negative order_value")
-        return order_value
+        if order_value >= 0:
+            return order_value
+        raise ValueError("negative order_value")
 
     @validator("previous_order")
     def is_bolean(cls, previous_order):
@@ -61,9 +62,9 @@ class Brewery(BaseModel):
 
     @validator("name")
     def is_name_valid(cls, name):
-        if re.fullmatch(RE_BREWERY_NAMES, name) is None:
-            raise ValueError("name invalid")
-        return name
+        if re.fullmatch(RE_BREWERY_NAMES, name):
+            return name
+        raise ValueError("name invalid")
 
 
 class Breweries_names(BaseModel):
