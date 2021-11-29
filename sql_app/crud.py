@@ -1,8 +1,13 @@
+"""
+This module defines the interface between the API and the database
+"""
+
 from logs.customlogger import logger
 
 from sqlalchemy.orm import Session
 
 from .orm_models import UserOrm
+
 from .models import UserCreate
 
 from .security import hash_password
@@ -10,20 +15,14 @@ from .security import hash_password
 
 def get_user_by_email(db: Session, email: str):
     """
-    Search a user by email in database
+    Search a user by email in database.
 
-    Parameters:
-        db : Session
-            a database session
+    Args:
+        db (Session): a database session/connection.
+        email (str): an email.
 
-        email : str
-            the user email
-
-    Return
-        bool : True
-            if any entry with the email found
-        bool : False
-            if none entry with  email was found
+    Returns:
+        UserOrm: return the user in database.
     """
     logger.info("called")
     return db.query(UserOrm).filter(UserOrm.email == email).first()
@@ -31,21 +30,16 @@ def get_user_by_email(db: Session, email: str):
 
 def create_user(db: Session, user: UserCreate):
     """
-    Create a new user and register on the database
+    Create a new user and register on the database.
 
-    Parameters:
-        db : Session
-            a database session
+    Args:
+        db (Session): a database session/connection.
+        user (UserCreate): a valid UserCreate with password and email,
+        the user's password will be hashed using the SHA256 algorithm,
+        before it will be stored.
 
-        user: UserCreate
-            a valid UserCreate with password and email, the user's
-            password will be hashed using the SHA256 algorithm,
-            before it will be stored.
-
-    Return:
-        db_user: User
-
-            a User object
+    Returns:
+        UserOrm: return the user in database.
     """
     hashed_password = hash_password(user.password)
     db_user = UserOrm(email=user.email, hashed_password=hashed_password)

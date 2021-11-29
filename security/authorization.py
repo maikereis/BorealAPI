@@ -1,3 +1,7 @@
+"""
+This module is responsible for the authorization process, creating
+tokens when a valid user requests one and verifies the received tokens.
+"""
 from jose import JWTError, JWSError, jwt
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
@@ -23,21 +27,27 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 def create_jwt(sub: str):
     """
-    Create the JWT by passing a :func:`sub` (subject) and a `exp`
-    (expiration). The `auth_settings` load the `secret_key`,
-    `algorithm` and `lifetime` from `.env` configuration file.
+    This function creates the JWT, which has a 'sub' and an 'exp'.
+    The 'sub' is passed as a parameter, which in this application will
+    be the user email.
 
-    Parameters:
-        sub : str
+    The expiration 'exp' will be calculated by the current time that
+    token creation was requested plus the lifetime defined by the
+    environment variable.(defined in .env file as LIFETIME_MINUTES and
+    loaded by auth_settings)
 
-            a JWT subject
+    Args:
+
+        sub (str): the token subject.
+
+    Raises:
+
+        internal_error_exception: if the token can't be created.
 
     Returns:
-        new_jwt : str
 
-            a JWT string with {'sub':<subject>, 'exp':<datetime>}
-            encoded by secret_key, and algorithm.
-
+        str: return a JWT. A string resulted by hashing the expiration
+        date, subject using the secret_key and algorithm
     """
     logger.info("called")
 
@@ -46,6 +56,7 @@ def create_jwt(sub: str):
         # Create the JSON Web Token
         jwt_payload = JWTPayload(
             sub=sub,
+            # Perform the expiration time calculation
             exp=datetime.utcnow() + timedelta(minutes=auth_settings.lifetime),
         )
 
@@ -59,28 +70,33 @@ def create_jwt(sub: str):
         return new_jwt
 
     except JWSError:
-        logger.error("JWT cannot be decode")
+        logger.error("JWT cannot be encoded")
         raise internal_error_exception
 
 
 async def verify_jwt(jwt_string: str = Depends(oauth2_scheme)):
     """
-        When a jwt token is passed, we need to:
-            1. ensure that these token was signed by our API.
-            2. is not expired.
-            3. the token owner is a valid user in database.
-        If successfully checked, returns the token
-    owner.
+    This function will:
+        1. ensure that the passed token was signed this our API.
+        2. the token is not expired.
+        3. the token owner is a valid user in database.
 
-        Parameters:
-            jwt: str
+    Args:
 
-                A JWT passed by request.
+        jwt_string (str, optional): A JWT passed by request.
+        Defaults to Depends(oauth2_scheme).
 
-        Returns:
-            jwt_owner : TokenOwner
+    Raises:
 
-                The token owner identification.
+        credentials_exception: if the token has invalid credentials.
+
+        expired_signature_exception: if the token has expired.
+
+        credentials_exception: if the token can't be decoded.
+
+    Returns:
+
+        TokenOwner: The token owner identification.
     """
     logger.info("called")
 
@@ -92,7 +108,7 @@ async def verify_jwt(jwt_string: str = Depends(oauth2_scheme)):
             algorithms=[auth_settings.algorithm],
         )
         # If successfully decoded, reads the content and access the
-        # subject with, in this application, must contain the owner name.
+        # subject with, in this application, must contain the user email.
         email: str = decoded_payload.get("sub")
         if email is None:
             logger.error("Invalid Credentials")
@@ -101,7 +117,6 @@ async def verify_jwt(jwt_string: str = Depends(oauth2_scheme)):
         jwt_owner = TokenOwner(email=email)
         return jwt_owner
 
-    # Throw a Exception when the signature is expired
     except jwt.ExpiredSignatureError:
         logger.error("Token Signature Expired")
         raise expired_signature_exception

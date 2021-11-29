@@ -7,20 +7,21 @@ from sql_app.security import verify_password
 
 def authenticate_user(db: Session, email: str, password: str):
     """
-    Start the authentication process:
-    1. Search the user in database.
-    2. Verify if credentials (password) matches.
+    This function will:
+        1. Search the user in database.
+        2. Verify if credentials (password) matches.
 
-        Parameters:
-            email : str
-                the user identification, in this application is an email.
+    Args:
 
-            password : str
-                the user password.
+        db (Session): a database session.
 
-            db : Session
-                a database session
+        email (str): an user email
 
+        password (str): a user password.
+
+    Returns:
+
+        UserOrm: return the user representation.
     """
     logger.info("called")
 
