@@ -23,6 +23,7 @@ from exceptions import (
     inactive_user_exception,
 )
 
+BREWERIES_API_URL = "https://api.openbrewerydb.org/breweries/"
 
 app = FastAPI()
 
@@ -77,7 +78,7 @@ def get_breweries():
     """
     # Send a request
     breweries_response = requests.get(
-        "https://api.openbrewerydb.org/breweries/",
+        BREWERIES_API_URL,
         headers={"Content-Type": "application/json"},
     )
 
