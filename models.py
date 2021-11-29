@@ -29,5 +29,5 @@ class Brewery(BaseModel):
     created_at: datetime
 
 
-class Breweries(BaseModel):
-    all_breweries: List[Brewery]
+class Breweries_names(BaseModel):
+    names: List[str]

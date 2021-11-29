@@ -15,7 +15,7 @@ logger.remove()
 if LOG_ON_FILE:
     today = datetime.utcnow()
     logger.add(
-        f"logs/data/logs_from.log",
+        "logs/data/logs_from.log",
         retention="30 days",
         rotation="1 day",
         format=FORMAT,

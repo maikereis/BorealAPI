@@ -14,7 +14,7 @@ from security.models import Token, TokenOwner
 from security.authentication import authenticate_user
 from security.authorization import create_jwt, verify_jwt
 
-from models import Order, Breweries
+from models import Order, Breweries_names
 
 from exceptions import (
     non_user_exception,
@@ -73,7 +73,7 @@ def get_breweries():
 
     Returns:
 
-        Breweries: an object that holds a Brewery list.
+        Breweries_names: an names list.
     """
     # Send a request
     breweries_response = requests.get(
@@ -90,10 +90,10 @@ def get_breweries():
     # raise an exception
     try:
         breweries_list = breweries_response.json()
-
         # Breweries object will take charge of every validation
         # using the @valitador from pydantic
-        return Breweries(all_breweries=breweries_list)
+        breweries_names = [brewery['name'] for brewery in breweries_list]
+        return Breweries_names(names=breweries_names)
     except Exception as e:
         logger.error(e)
         return {"status": "error, invalid breweries list."}
@@ -194,7 +194,7 @@ async def pass_user(current_user: User = Depends(identify_user),
 @app.get("/api/open_breweries")
 async def get_breweries(
     current_user: User = Depends(identify_user),
-    breweries: Breweries = Depends(get_breweries),
+    breweries_names: Breweries_names = Depends(get_breweries),
 ):
     """
     An endpoint that triggers a request for a list of breweries
@@ -220,7 +220,7 @@ async def get_breweries(
         logger.error("Inactive User / Access Denied")
         raise inactive_user_exception
 
-    return breweries
+    return breweries_names
 
 
 if __name__ == "__main__":
