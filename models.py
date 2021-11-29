@@ -8,25 +8,26 @@ RE_NAMES = "[A-Za-z]{2,30}"
 
 RE_BREWERY_NAMES = "[A-Za-z0-9. -]{2,50}"
 
+
 class Order(BaseModel):
     user_client: str
     order_value: float
     previous_order: bool
 
-    @validator('user_client')
+    @validator("user_client")
     def is_user_client_valid(cls, user_client):
         if re.fullmatch(RE_NAMES, user_client) is None:
             raise ValueError("user/client invalid")
         return user_client
 
-    @validator('order_value')
+    @validator("order_value")
     def value_is_positive(cls, order_value):
         if order_value < 0:
-            logger.error('negative order_value')
-            raise ValueError('negative order_value')
+            logger.error("negative order_value")
+            raise ValueError("negative order_value")
         return order_value
 
-    @validator('previous_order')
+    @validator("previous_order")
     def is_bolean(cls, previous_order):
         if isinstance(previous_order, bool):
             return previous_order
@@ -52,23 +53,24 @@ class Brewery(BaseModel):
     updated_at: Optional[datetime]
     created_at: Optional[datetime]
 
-    @validator('name')
+    @validator("name")
     def is_string(cls, name):
         if isinstance(name, str):
             return name
-        raise ValueError('not a string')
+        raise ValueError("not a string")
 
-    @validator('name')
+    @validator("name")
     def is_name_valid(cls, name):
         if re.fullmatch(RE_BREWERY_NAMES, name) is None:
             raise ValueError("name invalid")
         return name
 
+
 class Breweries_names(BaseModel):
     names: List[str]
 
-    @validator('names')
+    @validator("names")
     def is_string(cls, names):
         if isinstance(names, List):
             return names
-        raise ValueError('not a List')
+        raise ValueError("not a List")

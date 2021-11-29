@@ -8,6 +8,7 @@ from pydantic import BaseModel, validator
 from logs.customlogger import logger
 from typing import Optional
 
+RE_NAMES = "[A-Za-z]{2,30}"
 RE_EMAILS = "^[a-z][a-z0-9._]+@[a-z0-9]+.([a-z]+).([a-z]+)"
 
 
@@ -24,6 +25,18 @@ class Token(BaseModel):
 
     access_token: str
     token_type: str
+
+    @validator("access_token", "token_type")
+    def is_string(cls, value):
+        if isinstance(value, str):
+            return value
+        raise ValueError("not a string")
+
+    @validator("token_type")
+    def is_token_type_valid(cls, token_type):
+        if re.fullmatch(RE_NAMES, token_type) is None:
+            raise ValueError("token_type invalid")
+        return token_type
 
 
 class TokenOwner(BaseModel):
@@ -96,3 +109,9 @@ class JWTPayload(BaseModel):
             logger.error("sub has an invalid e-mail")
             raise ValueError("e-mail invalid")
         return sub
+
+    @validator("exp")
+    def is_datetime(cls, exp):
+        if isinstance(exp, datetime):
+            return exp
+        raise ValueError("datetime invalid")

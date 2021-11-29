@@ -32,6 +32,7 @@ def test_Order():
     with pytest.raises(ValueError):
         Order(user_client=5.5, order_value=0, previous_order=True)
 
+
 def test_Brewery():
 
     assert Brewery(name="12 West Brewing Company - Production Facility")
@@ -40,3 +41,9 @@ def test_Brewery():
         Brewery(name="12' West Brewing Company - Production Facility.")
     with pytest.raises(ValueError):
         Brewery(name="12' West Brewing Company - Production Facility.")
+
+
+def test_Breweries_list():
+
+    assert Breweries_names(names=["dd", "sdad", "Dsa"])
+    assert Breweries_names(names=[1, "dsd", "sd"])
