@@ -13,7 +13,9 @@ This is an API made using FastAPI. This api has the following features:
 
 
 <br>
-<h2> Setting Users database </h2>
+<h2 name="settingusersdb"> Setting Users Database </h2>
+
+
 
 We need to know who is a valid user of the API or not, the modules [authorization](security/authorization.py) and [authentication](security/authentication.py) takes charge of this verification, hence we need to set up a database to consult the user's credentials when necessary
 
@@ -73,6 +75,22 @@ The [Swagger UI](https://swagger.io/tools/swagger-ui/) for the applications will
     http://127.0.0.1:8000/docs 
 
 
+<h2> Test the API </h2>
+
+On the [Swagger UI](http://127.0.0.1:8000/docs) click on the **green** button **Authorize** on the **upper right** side of the page, type one of the credentials used in the [Setting Users Database](#settingusersdb)  step:
+
+```python
+
+username: fake_email0@gmail.com
+password: pass0
+
+Client credentials location: Authorization Header
+
+client_id:
+client_secret:
+
+```
+, then click on the Authorize button. It will automatically request an authorization token and insert it in every request made by the Swagger UI.
 
 <br>
 <h2> Try Out </h2>
