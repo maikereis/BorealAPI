@@ -1,7 +1,7 @@
 from logs.customlogger import logger
 
 from sql_app import crud, orm_models
-from sql_app.schemas import UserCreate
+from sql_app.models import UserCreate
 from sql_app.database import SessionLocal, engine
 from security import authentication
 
