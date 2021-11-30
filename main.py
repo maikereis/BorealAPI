@@ -1,7 +1,7 @@
 import requests
 from logs.customlogger import logger
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Body
 from fastapi.security import OAuth2PasswordRequestForm
 
 from sql_app.models import User
@@ -162,8 +162,7 @@ async def request_token(
 
 
 @app.post("/api/loop_back")
-async def pass_user(current_user: User = Depends(identify_user),
-                    order=Depends(Order)):
+async def pass_user(order: Order, current_user: User = Depends(identify_user)):
     """
     Receive an Order object, and return the same object. The user in
     session/connection must send a valid JWT.
