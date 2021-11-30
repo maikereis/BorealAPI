@@ -1,7 +1,7 @@
 import requests
 from logs.customlogger import logger
 
-from fastapi import Depends, FastAPI, Body
+from fastapi import Depends, FastAPI
 from fastapi.security import OAuth2PasswordRequestForm
 
 from sql_app.models import User
@@ -173,7 +173,7 @@ async def pass_user(order: Order, current_user: User = Depends(identify_user)):
         Defaults to Depends(identify_user).
 
         order (Order, optional): an Order object.
-        Defaults to Depends(Order).
+        Defaults to Order.
 
     Raises:
 
@@ -185,10 +185,11 @@ async def pass_user(order: Order, current_user: User = Depends(identify_user)):
         Order: the same payload received is returned.
     """
     logger.info("called")
-    if not current_user.is_active:
-        logger.error("Inactive User / Access Denied")
-        raise inactive_user_exception
-    return order
+    if current_user.is_active:
+        return order
+        
+    logger.error("Inactive User / Access Denied")
+    raise inactive_user_exception
 
 
 @app.get("/api/open_breweries")
@@ -216,11 +217,12 @@ async def get_breweries(
         Breweries: the Breweries received from Breweries API
     """
     logger.info("called")
-    if not current_user.is_active:
-        logger.error("Inactive User / Access Denied")
-        raise inactive_user_exception
+    if current_user.is_active:
+        return breweries_names
 
-    return breweries_names
+    logger.error("Inactive User / Access Denied")
+    raise inactive_user_exception
+
 
 
 if __name__ == "__main__":
