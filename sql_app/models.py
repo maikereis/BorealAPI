@@ -19,7 +19,7 @@ class UserBase(BaseModel):
     email: str
     # Verifies if the email matches the format "a.b.c@d.e.f"
 
-    @validator("email")
+    @validator("email", allow_reuse=True)
     def email_has_correct_format(cls, email):
         if re.fullmatch(RE_EMAILS, email):
             return email

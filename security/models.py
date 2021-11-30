@@ -102,7 +102,7 @@ class JWTPayload(BaseModel):
         """
         self.exp = self.datetime.now(timezone.utc) + lifetime
 
-    @validator("sub")
+    @validator("sub", allow_reuse=True)
     def email_has_correct_format(cls, sub):
         if re.fullmatch(RE_EMAILS, sub):
             return sub
